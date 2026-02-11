@@ -1,0 +1,14 @@
+{
+    "users": [
+        { "id": 1, "name": "Ana Torres", "active": true },
+        { "id": 2, "name": "Carlos Gómez", "active": true },
+        { "id": 3, "name": "María López", "active": false },
+        { "id": 4, "name": "Juan Pérez", "active": true },
+        { "id": 5, "name": "Laura Martínez", "active": true },
+        { "id": 6, "name": "Pedro Sánchez", "active": false },
+        { "id": 7, "name": "Sofía Ramírez", "active": true },
+        { "id": 8, "name": "Andrés Morales", "active": true },
+        { "id": 9, "name": "Valentina Cruz", "active": true },
+        { "id": 10, "name": "Diego Herrera", "active": false }
+    ]
+}
