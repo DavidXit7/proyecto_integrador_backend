@@ -1,12 +1,12 @@
-const express = require('express');
-const router = express.Router();
+import express from 'express'
+import { getUsers, getuserById, createUser, updateUser, deleteUser } from '../controllers/users.controller.js'
 
-router.get('/', (req, res) => {
-  res.send('Aquí se listarán los usuarios');
-});
+const userRouter = express.Router()
 
-router.post('/', (req, res) => {
-  res.send('Aquí se creará un usuario');
-});
+userRouter.get('/', getUsers)
+userRouter.get('/:id', getuserById)
+userRouter.post('/', createUser)
+userRouter.put('/:id', updateUser)
+userRouter.delete('/:id', deleteUser)
 
-module.exports = router;
+export default userRouter
