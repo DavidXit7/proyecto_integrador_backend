@@ -1,50 +1,95 @@
-const VALID_STATUSES = ['pending', 'in-progress', 'completed']
+import pool from '../config/db.js'
 
-let tasks = [
-  { id: 1, title: "Configurar servidor", description: "Instalar Express",   status: "completed",   userId: 1 },
-  { id: 2, title: "Crear rutas",         description: "Definir rutas REST", status: "in-progress", userId: 1 },
-  { id: 3, title: "Diseñar modelos",     description: "Modelar entidades",  status: "pending",     userId: 2 }
-]
-let nextId = 4
-
-const getAll = () => {
-  try { return tasks } catch (error) { return [] }
-}
-
-const getById = (id) => {
-  try { return tasks.find(t => t.id === Number(id)) || null } catch (error) { return [] }
-}
-
-const getByUserId = (userId) => {
-  try { return tasks.filter(t => t.userId === Number(userId)) } catch (error) { return [] }
-}
-
-const create = (title, description, status = 'pending', userId) => {
+const getAll = async () => {
   try {
-    if (!VALID_STATUSES.includes(status)) return null
-    const task = { id: nextId++, title, description, status, userId: Number(userId) }
-    tasks.push(task)
-    return task
+    const [tareas] = await pool.query('SELECT * FROM tareas')
+    for (const tarea of tareas) {
+      const [usuarios] = await pool.query(
+        `SELECT u.documento FROM usuarios u
+         JOIN tarea_usuario tu ON tu.usuario_id = u.id
+         WHERE tu.tarea_id = ?`,
+        [tarea.id]
+      )
+      tarea.usuarios_asignados = usuarios.map(u => u.documento)
+    }
+    return tareas
   } catch (error) { return [] }
 }
 
-const update = (id, title, description, status, userId) => {
+const getById = async (id) => {
   try {
-    const index = tasks.findIndex(t => t.id === Number(id))
-    if (index === -1) return null
-    if (status && !VALID_STATUSES.includes(status)) return null
-    tasks[index] = { id: Number(id), title, description, status, userId: Number(userId) }
-    return tasks[index]
+    const [rows] = await pool.query('SELECT * FROM tareas WHERE id = ?', [id])
+    if (!rows[0]) return null
+    const tarea = rows[0]
+    const [usuarios] = await pool.query(
+      `SELECT u.documento FROM usuarios u
+       JOIN tarea_usuario tu ON tu.usuario_id = u.id
+       WHERE tu.tarea_id = ?`,
+      [tarea.id]
+    )
+    tarea.usuarios_asignados = usuarios.map(u => u.documento)
+    return tarea
+  } catch (error) { return null }
+}
+
+const getByUserId = async (userId) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT t.* FROM tareas t
+       JOIN tarea_usuario tu ON tu.tarea_id = t.id
+       WHERE tu.usuario_id = ?`,
+      [userId]
+    )
+    return rows
   } catch (error) { return [] }
 }
 
-const destroy = (id) => {
+const create = async (titulo, descripcion, estado = 'pendiente', usuarios_asignados = []) => {
   try {
-    const index = tasks.findIndex(t => t.id === Number(id))
-    if (index === -1) return false
-    tasks.splice(index, 1)
-    return true
-  } catch (error) { return [] }
+    const [result] = await pool.query(
+      'INSERT INTO tareas (titulo, descripcion, estado) VALUES (?, ?, ?)',
+      [titulo, descripcion, estado]
+    )
+    const tareaId = result.insertId
+
+    // Asignar usuarios por documento
+    for (const documento of usuarios_asignados) {
+      const [usuarios] = await pool.query('SELECT id FROM usuarios WHERE documento = ?', [documento])
+      if (usuarios[0]) {
+        await pool.query('INSERT INTO tarea_usuario (tarea_id, usuario_id) VALUES (?, ?)', [tareaId, usuarios[0].id])
+      }
+    }
+
+    return await getById(tareaId)
+  } catch (error) { return null }
+}
+
+const update = async (id, titulo, descripcion, estado, usuarios_asignados = []) => {
+  try {
+    const [result] = await pool.query(
+      'UPDATE tareas SET titulo = ?, descripcion = ?, estado = ? WHERE id = ?',
+      [titulo, descripcion, estado, id]
+    )
+    if (result.affectedRows === 0) return null
+
+    // Reemplazar usuarios asignados
+    await pool.query('DELETE FROM tarea_usuario WHERE tarea_id = ?', [id])
+    for (const documento of usuarios_asignados) {
+      const [usuarios] = await pool.query('SELECT id FROM usuarios WHERE documento = ?', [documento])
+      if (usuarios[0]) {
+        await pool.query('INSERT INTO tarea_usuario (tarea_id, usuario_id) VALUES (?, ?)', [id, usuarios[0].id])
+      }
+    }
+
+    return await getById(id)
+  } catch (error) { return null }
+}
+
+const destroy = async (id) => {
+  try {
+    const [result] = await pool.query('DELETE FROM tareas WHERE id = ?', [id])
+    return result.affectedRows > 0
+  } catch (error) { return false }
 }
 
 export { getAll, getById, getByUserId, create, update, destroy }
