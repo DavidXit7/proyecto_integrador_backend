@@ -1,7 +1,6 @@
 import express from 'express'
 import userRouter from './routes/users.routes.js'
 import taskRouter from './routes/tasks.routes.js'
-import catalogRouter from './routes/catalogs.routes.js'
 
 const app = express()
 
@@ -19,6 +18,5 @@ app.use((req, res, next) => {
 // Rutas que espera el frontend
 app.use('/usuarios', userRouter)
 app.use('/tareas', taskRouter)
-app.use('/', catalogRouter)
 
 export default app

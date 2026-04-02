@@ -5,30 +5,14 @@
 CREATE DATABASE IF NOT EXISTS Backend_Grupo_6;
 USE Backend_Grupo_6;
 
-CREATE TABLE generos (
-    id      INT         NOT NULL AUTO_INCREMENT,
-    genero  VARCHAR(50) NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE ciudades (
-    id      INT          NOT NULL AUTO_INCREMENT,
-    ciudad  VARCHAR(100) NOT NULL,
-    PRIMARY KEY (id)
-);
-
 CREATE TABLE usuarios (
     id          INT          NOT NULL AUTO_INCREMENT,
     documento   VARCHAR(10)  NOT NULL UNIQUE,
     nombre      VARCHAR(150) NOT NULL,
-    genero_id   INT          NOT NULL,
-    ciudad_id   INT          NOT NULL,
     correo      VARCHAR(255) NOT NULL,
     created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (genero_id) REFERENCES generos(id),
-    FOREIGN KEY (ciudad_id) REFERENCES ciudades(id)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE tareas (
