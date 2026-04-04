@@ -43,6 +43,7 @@ CREATE TABLE usuarios (
     genero_id   INT          NOT NULL,
     ciudad_id   INT          NOT NULL,
     correo      VARCHAR(255) NOT NULL,
+    activo      TINYINT      NOT NULL DEFAULT 1,
     created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
@@ -57,7 +58,7 @@ CREATE TABLE tareas (
     id           INT          NOT NULL AUTO_INCREMENT,
     titulo       VARCHAR(255) NOT NULL,
     descripcion  TEXT,
-    estado       ENUM('pendiente', 'en proceso', 'completada') NOT NULL DEFAULT 'pendiente',
+    activo       TINYINT      NOT NULL DEFAULT 1,
     created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
@@ -69,6 +70,7 @@ CREATE TABLE tareas (
 CREATE TABLE tarea_usuario (
     tarea_id   INT NOT NULL,
     usuario_id INT NOT NULL,
+    estado     ENUM('pendiente', 'completada') NOT NULL DEFAULT 'pendiente',
     PRIMARY KEY (tarea_id, usuario_id),
     FOREIGN KEY (tarea_id)   REFERENCES tareas(id)   ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE RESTRICT ON UPDATE CASCADE
