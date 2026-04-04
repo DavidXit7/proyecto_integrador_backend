@@ -9,8 +9,8 @@ USE Backend_Grupo_6;
 -- TABLA: generos
 -- ------------------------------------------------------------
 CREATE TABLE generos (
-    id      INT         NOT NULL AUTO_INCREMENT,
-    genero  VARCHAR(50) NOT NULL,
+    id     INT         NOT NULL AUTO_INCREMENT,
+    genero VARCHAR(50) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -23,8 +23,8 @@ INSERT INTO generos (id, genero) VALUES
 -- TABLA: ciudades
 -- ------------------------------------------------------------
 CREATE TABLE ciudades (
-    id      INT          NOT NULL AUTO_INCREMENT,
-    ciudad  VARCHAR(100) NOT NULL,
+    id     INT          NOT NULL AUTO_INCREMENT,
+    ciudad VARCHAR(100) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -64,26 +64,19 @@ CREATE TABLE tareas (
 );
 
 -- ------------------------------------------------------------
--- TABLA: tarea_usuario (una tarea puede tener varios usuarios)
+-- TABLA: tarea_usuario (relacion muchos a muchos)
 -- ------------------------------------------------------------
 CREATE TABLE tarea_usuario (
-    tarea_id    INT NOT NULL,
-    usuario_id  INT NOT NULL,
+    tarea_id   INT NOT NULL,
+    usuario_id INT NOT NULL,
     PRIMARY KEY (tarea_id, usuario_id),
-    FOREIGN KEY (tarea_id)   REFERENCES tareas(id)   ON DELETE CASCADE,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+    FOREIGN KEY (tarea_id)   REFERENCES tareas(id)   ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- ============================================================
--- USUARIO DE LA APLICACIÓN
+-- USUARIO DE LA APLICACION
 -- ============================================================
-CREATE USER IF NOT EXISTS 'app_user_2994281'@'localhost'
-    IDENTIFIED BY '#ADSO_2994281';
-
-GRANT ALL PRIVILEGES ON Backend_Grupo_6.*
-    TO 'app_user_2994281'@'localhost';
-
-FLUSH PRIVILEGES;
-
-ALTER USER 'app_user_2994281'@'localhost' IDENTIFIED BY 'ADSO_2994281';
+CREATE USER IF NOT EXISTS 'app_user_2994281'@'localhost' IDENTIFIED BY 'ADSO_2994281';
+GRANT ALL PRIVILEGES ON Backend_Grupo_6.* TO 'app_user_2994281'@'localhost';
 FLUSH PRIVILEGES;
