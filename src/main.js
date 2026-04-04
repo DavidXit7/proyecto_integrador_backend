@@ -3,7 +3,6 @@ import userRouter from './routes/users.routes.js'
 import taskRouter from './routes/tasks.routes.js'
 
 const app = express()
-const port = 3000
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -16,9 +15,8 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use('/users', userRouter)
-app.use('/tasks', taskRouter)
+// Rutas que espera el frontend
+app.use('/usuarios', userRouter)
+app.use('/tareas', taskRouter)
 
-app.listen(port, () => {
-  console.log(`Servidor escuchando en http://localhost:${port}`)
-})
+export default app

@@ -1,35 +1,36 @@
 import { getAll, getById, create, update, destroy } from "../models/user.model.js"
 
-const getUsers = (req, res) => {
-  const users = getAll()
-  res.status(200).json({ msn: "lista de usuarios", data: users })
+const getUsers = async (req, res) => {
+  const users = await getAll()
+  res.status(200).json(users)
 }
 
-const getuserById = (req, res) => {
+const getuserById = async (req, res) => {
   const { id } = req.params
-  const user = getById(id)
+  const user = await getById(id)
   if (!user) return res.status(404).json({ msn: `Usuario con id: ${id} no encontrado`, data: [] })
-  res.status(200).json({ msn: `Usuario con id: ${id} consultado correctamente`, data: user })
+  res.status(200).json(user)
 }
 
-const createUser = (req, res) => {
-  const { name, email, phone } = req.body
-  if (!name || !email) return res.status(400).json({ msn: "name y email son obligatorios", data: [] })
-  const user = create(name, email, phone)
-  res.status(201).json({ msn: "Usuario creado correctamente", data: user })
+const createUser = async (req, res) => {
+  const { documento, nombre, correo } = req.body
+  if (!documento || !nombre || !correo) return res.status(400).json({ msn: "documento, nombre y correo son obligatorios", data: [] })
+  const user = await create(documento, nombre, correo)
+  if (!user) return res.status(500).json({ msn: "Error al crear el usuario", data: [] })
+  res.status(201).json(user)
 }
 
-const updateUser = (req, res) => {
+const updateUser = async (req, res) => {
   const { id } = req.params
-  const { name, email, phone } = req.body
-  const user = update(id, name, email, phone)
+  const { documento, nombre, correo } = req.body
+  const user = await update(id, documento, nombre, correo)
   if (!user) return res.status(404).json({ msn: `Usuario con id: ${id} no encontrado`, data: [] })
-  res.status(200).json({ msn: `Usuario con id: ${id} modificado correctamente`, data: user })
+  res.status(200).json(user)
 }
 
-const deleteUser = (req, res) => {
+const deleteUser = async (req, res) => {
   const { id } = req.params
-  if (destroy(id)) {
+  if (await destroy(id)) {
     res.status(200).json({ msn: `Usuario con id: ${id} eliminado correctamente`, data: [{ id }] })
   } else {
     res.status(404).json({ msn: `Usuario con id: ${id} no encontrado`, data: [] })
