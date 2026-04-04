@@ -1,22 +1,19 @@
 import express from 'express'
+import cors from 'cors'
 import userRouter from './routes/users.routes.js'
 import taskRouter from './routes/tasks.routes.js'
+import { getAllCiudades, getAllGeneros } from './controllers/metadata.controller.js'
 
 const app = express()
 
+app.use(cors()) // Habilita CORS para todas las rutas
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'Content-Type')
-  if (req.method === 'OPTIONS') return res.sendStatus(200)
-  next()
-})
 
 // Rutas que espera el frontend
 app.use('/usuarios', userRouter)
 app.use('/tareas', taskRouter)
+app.get('/ciudades', getAllCiudades)
+app.get('/generos', getAllGeneros)
 
 export default app
