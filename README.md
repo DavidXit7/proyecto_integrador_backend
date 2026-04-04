@@ -66,9 +66,9 @@ Antes de ejecutar el proyecto es necesario tener instalado:
 ```bash
 npm install
 ```
-### Paso 2 — Iniciar el servidor
+### Paso 2 — Iniciar el servidor con nodemon
 ```bash
-npm start
+npm run dev
 ```
 ### Paso 3 — Verificar
 Accede a tu navegador o Postman en:
