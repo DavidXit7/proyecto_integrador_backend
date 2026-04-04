@@ -11,3 +11,4 @@ const getAllGeneros = async (req, res) => {
 }
 
 export { getAllCiudades, getAllGeneros }
+

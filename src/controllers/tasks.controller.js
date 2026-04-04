@@ -66,3 +66,4 @@ const deleteTask = async (req, res) => {
 }
 
 export { getTasks, getTaskById, getTasksByUser, createTask, updateTask, deleteTask, updateTaskStatus }
+

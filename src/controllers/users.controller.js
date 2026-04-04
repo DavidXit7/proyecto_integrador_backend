@@ -40,3 +40,4 @@ const deleteUser = async (req, res) => {
 }
 
 export { getUsers, getuserById, createUser, updateUser, deleteUser }
+
