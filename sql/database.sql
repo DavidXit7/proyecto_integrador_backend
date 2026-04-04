@@ -73,10 +73,3 @@ CREATE TABLE tarea_usuario (
     FOREIGN KEY (tarea_id)   REFERENCES tareas(id)   ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
-
--- ============================================================
--- USUARIO DE LA APLICACION
--- ============================================================
-CREATE USER IF NOT EXISTS 'app_user_2994281'@'localhost' IDENTIFIED BY 'ADSO_2994281';
-GRANT ALL PRIVILEGES ON Backend_Grupo_6.* TO 'app_user_2994281'@'localhost';
-FLUSH PRIVILEGES;
