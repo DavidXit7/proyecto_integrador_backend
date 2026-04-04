@@ -1,65 +1,119 @@
-# API de Productos - Arquitectura en Capas (Persistencia en Memoria)
+# Integrantes del proyecto: David Rueda - Alejandro Peña - Karen Michelle
 
-Bienvenido a este proyecto de aprendizaje. El objetivo de esta API es comprender el flujo de la información en el backend utilizando **Node.js** y **ES Modules**. 
+# To Do List - Gestion de Tareas
 
-Para enfocarnos 100% en la lógica de programación y la estructura del proyecto, esta primera versión utiliza **persistencia en memoria** (un arreglo de datos) en lugar de un motor de base de datos tradicional. Esto nos permite aislar el aprendizaje de la arquitectura antes de introducir la complejidad de SQL.
+# Propósito del Proyecto
+Backend construido con Node.js, Express y MySQL para gestionar la persistencia de datos de usuarios y tareas masivas. Provee una API REST segura para servir a la interfaz de usuario en el frontend:
 
----
+*   Gestión centralizada de usuarios con borrado lógico (Soft Delete).
+*   Control de asignaciones de tareas múltiples sincronizadas.
+*   Cálculo de estados de tareas por usuario individual.
+*   Proveer una API estable y escalable bajo arquitectura MVC.
 
-## 1. Instalación y Configuración Inicial
+# Tecnologías Utilizadas
+*   **Node.js** — Entorno de ejecución de JS en el servidor.
+*   **Express** — Framework para la creación de rutas y middlewares de la API.
+*   **MySQL** — Base de datos relacional para el almacenamiento persistente.
+*   **Dotenv** — Gestión segura de configuraciones mediante variables de entorno (.env).
+*   **CORS** — Middleware para permitir el intercambio de recursos entre orígenes.
+*   **JavaScript (ES6+)** — Lógica asíncrona avanzada para consultas a la DB.
 
-Para poner en marcha este proyecto, primero debemos inicializar nuestro entorno de Node e instalar las herramientas necesarias.
-
-### Comandos de instalación:
-```bash
-# 1. Inicializar el proyecto (crea el package.json)
-npm init -y
-
-# 2. Instalar el framework principal
-npm install express
-
-# 3. Instalar la herramienta de desarrollo (como dependencia de desarrollo)
-npm install -D nodemon
-``
-## 2. Estructura Jerárquica del Proyecto
-
-Para poner en marcha este proyecto, primero debemos inicializar nuestro entorno de Node e instalar las herramientas necesarias.
-`
-```
-## 2. Estructura Jerárquica del Proyecto
-
-La siguiente estructura organiza el código fuente separando la configuración global de la lógica de negocio y el almacenamiento de datos.
-
-```bash
-.
-├── src/
-│   ├── controllers/
-│   │   └── product.controller.js    # Manejo de peticiones y respuestas HTTP
-│   ├── data/
-│   │   └── products.data.js         # Fuente de datos (Arreglo en memoria)
-│   ├── models/
-│   │   └── product.model.js         # Lógica de acceso y manipulación de datos
-│   ├── routes/
-│   │   └── product.routes.js        # Definición de rutas y endpoints
-│   └── app.js                       # Configuración y middlewares de Express
-├── .gitignore                       # Archivos excluidos de Git (node_modules, .env)
-├── package.json                     # Dependencias y scripts del proyecto
-├── README.md                        # Documentación técnica
-└── server.js                        # Punto de entrada y arranque del servidor
-
+# Estructura del Proyecto
+```text
+proyecto_integrador_backend/
+├── sql/                          # Scripts de creación de la base de datos
+│   └── database.sql              # Definición de tablas y relaciones
+├── src/                          # Directorio de código fuente
+│   ├── config/                   # Configuración del servidor y DB
+│   │   └── db.js                 # Conector a MySQL mediante pool
+│   ├── controllers/              # Lógica de manejo de peticiones
+│   │   ├── tasks.controller.js   # Gestión de tareas y estados
+│   │   ├── users.controller.js   # Gestión de usuarios y Soft Delete
+│   │   └── metadata.controller.js # Metadatos (ciudades, géneros)
+│   ├── models/                   # Modelos de datos y consultas SQL
+│   │   ├── task.model.js         # Queries complejas para tareas
+│   │   ├── user.model.js         # Queries para usuarios (vincular/desvincular)
+│   │   └── metadata.model.js     # Queries para tablas paramétricas
+│   ├── routes/                   # Definición de los puntos finales de la API
+│   │   ├── tasks.routes.js       # Rutas para el CRUD de tareas
+│   │   └── users.routes.js       # Rutas para el CRUD de usuarios
+│   └── main.js                   # Configuración de rutas y subida del servidor
+├── .env                          # Variables de entorno (No se incluye en Git)
+├── package.json                  # Dependencias y scripts
+└── server.js                     # Punto de entrada principal
 ```
 
-### 3. Guía de Componentes y Capas
+# Requisitos Previos
+Antes de ejecutar el proyecto es necesario tener instalado:
+*   Node.js versión 18 o superior.
+*   Servidor MySQL (XAMPP, WAMP o nativo).
+*   La base de datos MySQL debe estar corriendo.
 
-Para que nuestro código sea ordenado y profesional, dividimos las tareas en diferentes "capas". Así es como funciona cada una:
+# Configuración de la API
+1.  Asegúrate de que tu servidor MySQL esté encendido.
+2.  Importa el script SQL de la carpeta `sql/database.sql` en tu gestor de base de datos.
+3.  Crea un archivo `.env` en la raíz del proyecto y configura tus credenciales:
+    ```env
+    DB_HOST=localhost
+    DB_USER=root
+    DB_PASSWORD=tu_password
+    DB_NAME=nombre_de_tu_bd
+    PORT=3000
+    ```
 
-* **Raíz (`/`):** Es la base del proyecto. Aquí se encuentra el archivo **`server.js`**, que funciona únicamente como el **"interruptor"** de encendido. Su única misión es importar la configuración de la aplicación (`app.js`) y dar la orden de inicio para que el servidor empiece a escuchar peticiones.
+# Cómo ejecutar el proyecto
+### Paso 1 — Instalar dependencias
+```bash
+npm install
+```
+### Paso 2 — Iniciar el servidor
+```bash
+npm start
+```
+### Paso 3 — Verificar
+Accede a tu navegador o Postman en:
+`http://localhost:3000`
 
-* **Carpeta `src/` (Source):** Es el corazón del proyecto donde vive todo nuestro código fuente.
-    * **`app.js` (El Motor):** Aquí es donde realmente **se configura el servidor**. Es el encargado de preparar a Express, instalar las herramientas de lectura (como el formato JSON) y conectar las rutas globales. Sin este archivo, el servidor no sabría cómo procesar la información.
+# Características de la Aplicación
 
-* **Capas Internas (El flujo de trabajo):**
-    * **Routes (Rutas):** Es la "recepción" de nuestra API. Su trabajo es recibir la visita del usuario (la URL) y decidir a qué oficina (Controlador) debe enviarlo según lo que necesite hacer.
-    * **Controllers (Controladores):** Es el "cerebro" que toma las decisiones. Recibe los datos que envía el usuario, le pide ayuda al Modelo para procesarlos y finalmente responde al cliente con un mensaje de éxito o de error.
-    * **Models (Modelos):** Es el "especialista" en los datos. Es el único que sabe cómo buscar, filtrar o eliminar información. El resto de la aplicación no toca los datos directamente; siempre le pide el favor al Modelo.
-    * **Data (Almacén):** Es nuestra "bodega" temporal. Aquí guardamos el arreglo de objetos con nuestros productos. En esta etapa, los datos viven en la memoria, lo que nos permite practicar antes de usar una base de datos real.
+### Gestión de Usuarios
+*   **Soft Delete**: Los usuarios nunca se borran físicamente; se marcan como inactivos para no perder integridad en las tareas.
+*   **CRUD Completo**: Crear, Leer, Actualizar y Eliminar usuarios activos.
+
+### Gestión de Tareas (Lógica Avanzada)
+*   **Asignación Múltiple**: Una tarea puede asignarse a N usuarios en un solo envío.
+*   **Estados Separados**: Cada usuario mantiene su propio estado (`pendiente`, `completada`) gracias a la tabla intermedia `tarea_usuario`.
+*   **Seguridad de Integridad**: Una tarea no puede eliminarse si hay usuarios asignados que aún la tienen pendiente.
+
+# Endpoints de la API
+
+### Usuarios (`/usuarios`)
+*   `GET /`: Obtiene lista de usuarios activos.
+*   `POST /`: Crea un nuevo usuario.
+*   `PUT /:id`: Actualiza datos de un usuario existente.
+*   `DELETE /:id`: Realiza un borrado lógico (Soft Delete).
+
+### Tareas (`/tareas`)
+*   `GET /`: Obtiene todas las tareas con sus usuarios y estados.
+*   `POST /`: Crea una tarea y asigna usuarios simultáneamente.
+*   `PUT /:id`: Modifica una tarea (solo si no está 100% finalizada).
+*   `DELETE /:id`: Elimina una tarea vacía o archivada.
+*   `PUT /finalizar`: Un usuario marca su parte de la tarea como terminada.
+
+### Metadatos (`/metadata`)
+*   `GET /ciudades`: Obtiene la lista de ciudades.
+*   `GET /generos`: Obtiene la lista de géneros disponibles.
+
+# Manejo de Errores e Integridad
+*   Cierre de conexiones inactivas mediante Pool de conexiones.
+*   Validación de datos relacionales íntegros.
+*   Respuestas de error estandarizadas con códigos HTTP (400, 404, 500).
+
+# Scripts Disponibles
+*   `npm start`: Inicia el servidor de producción.
+*   `npm run dev`: (Opcional) Inicia servidor con refresco automático si tienes `nodemon`.
+
+# Notas Importantes
+*   Asegúrate de que el puerto `3000` no esté ocupado por otra aplicación.
+*   El diseño de base de datos está optimizado para integridad referencial.
+*   Cualquier cambio en la DB requiere actualizar el archivo `.env`.
