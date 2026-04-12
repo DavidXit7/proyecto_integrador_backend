@@ -41,7 +41,7 @@ const getByUserId = async (documento) => {
       `SELECT t.*, tu.estado FROM tareas t
        JOIN tarea_usuario tu ON tu.tarea_id = t.id
        JOIN usuarios u ON u.id = tu.usuario_id
-       WHERE u.documento = ? AND u.activo = 1 AND t.activo = 1`,
+       WHERE u.documento = ? AND u.activo = 1`,
       [documento]
     )
     return rows
