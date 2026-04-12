@@ -32,10 +32,17 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const { id } = req.params
-  if (await destroy(id)) {
-    res.status(200).json({ msn: `Usuario con id: ${id} eliminado correctamente`, data: [{ id }] })
-  } else {
-    res.status(404).json({ msn: `Usuario con id: ${id} no encontrado`, data: [] })
+  try {
+    if (await destroy(id)) {
+      res.status(200).json({ msn: `Usuario con id: ${id} eliminado correctamente`, data: [{ id }] })
+    } else {
+      res.status(404).json({ msn: `Usuario con id: ${id} no encontrado`, data: [] })
+    }
+  } catch (error) {
+    if (error.code === "HAS_ASSIGNMENTS") {
+      return res.status(400).json({ msn: error.message, data: [] })
+    }
+    res.status(500).json({ msn: "Error al intentar eliminar el usuario", data: [] })
   }
 }
 
